@@ -15,36 +15,39 @@
    License along with this library; if not, write to the Free Software
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include <CapacitiveSensor.h>
+#include <SPI.h>
+#include <SD.h>
+#include <EducationShield.h>
+
+//Servo.h is necessary to be included here
+#include <Servo.h>
+
 #include <CurieBle.h>
 
 BLEPeripheral blePeripheral;  // BLE Peripheral Device (the board you're programming)
-BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // BLE LED Service
+BLEService logoService("19f82bd2-da79-11e5-b5d2-0a1d41d68578"); // BLE LED Service
 
-// BLE LED Switch Characteristic - custom 128-bit UUID, read and writable by central
-BLECharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite, 20);
+BLECharacteristic logoCharacteristic("19f82bd2-da79-11e5-b5d2-0a1d41d68579", BLERead | BLEWrite, 20);
 
 const int ledPin = 13; // pin to use for the LED
 unsigned char charBuffer[20];
 
+Wheels wheels=Wheels(6, 9);
+
 void setup() {
   Serial.begin(9600);
 
-  // set LED pin to output mode
-  pinMode(ledPin, OUTPUT);
+  wheels.begin();
 
   // set advertised local name and service UUID:
-  blePeripheral.setLocalName("LED");
-  blePeripheral.setAdvertisedServiceUuid(ledService.uuid());
+  blePeripheral.setLocalName("LogoRobot");
+  blePeripheral.setAdvertisedServiceUuid(logoService.uuid());
 
   // add service and characteristic:
-  blePeripheral.addAttribute(ledService);
-  blePeripheral.addAttribute(switchCharacteristic);
+  blePeripheral.addAttribute(logoService);
+  blePeripheral.addAttribute(logoCharacteristic);
 
-  // set the initial value for the characeristic:
-  //switchCharacteristic.setValue(0);
-  unsigned char msg[]="abc";
-  switchCharacteristic.setValue(msg,3);
-  
   // begin advertising BLE service:
   blePeripheral.begin();
 
@@ -65,17 +68,18 @@ void loop() {
     while (central.connected()) {
       // if the remote device wrote to the characteristic,
       // use the value to control the LED:
-      if (switchCharacteristic.written()) {
+      if (logoCharacteristic.written()) {
         //int bufferSize=sizeof switchCharacteristic.value();
         //Serial.println(bufferSize);
-        memcpy(charBuffer,switchCharacteristic.value(),20);
-        for(int i=0;i<20;i++){
+        memcpy(charBuffer,logoCharacteristic.value(),20);
+        for(int i=0;i<20 && charBuffer[i]!=0;i++){
           unsigned char n=charBuffer[i];
-          //if(n=='\0')break;
-          Serial.print(n);
-          Serial.print(' ');
 
-          //delay(2000);
+          logoMove(n);
+          Serial.print(n);
+          
+
+          
         }
         Serial.println();
         //Serial.println(switchCharacteristic.value());
@@ -87,4 +91,27 @@ void loop() {
     Serial.println(central.address());
   }
 }
+
+
+void logoMove(unsigned char direction){
+  switch(direction){
+    case 1:
+      wheels.goForward();
+      delay(3000);
+      break;
+    case 2:
+      wheels.goBackwards();
+      delay(3000);
+      break;
+    case 3:
+      wheels.turnLeft();
+      delay(1500);
+      break;
+    case 4:
+      wheels.turnRight();
+      delay(1500);
+      break;
+  }
+}
+
 
