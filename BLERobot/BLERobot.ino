@@ -24,6 +24,7 @@ BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214"); // BLE LED Servic
 BLECharacteristic switchCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite, 20);
 
 const int ledPin = 13; // pin to use for the LED
+unsigned char charBuffer[20];
 
 void setup() {
   Serial.begin(9600);
@@ -65,11 +66,16 @@ void loop() {
       // if the remote device wrote to the characteristic,
       // use the value to control the LED:
       if (switchCharacteristic.written()) {
-        //unsigned char * val=switchCharacteristic.value();
+        //int bufferSize=sizeof switchCharacteristic.value();
+        //Serial.println(bufferSize);
+        memcpy(charBuffer,switchCharacteristic.value(),20);
         for(int i=0;i<20;i++){
-          char n=(char)switchCharacteristic.value()[i];
-          if(n=='\0')break;
+          unsigned char n=charBuffer[i];
+          //if(n=='\0')break;
           Serial.print(n);
+          Serial.print(' ');
+
+          //delay(2000);
         }
         Serial.println();
         //Serial.println(switchCharacteristic.value());
