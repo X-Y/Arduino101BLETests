@@ -82,6 +82,7 @@ void loop() {
     while (central.connected()) {
       updateStatus();
       if(updated){
+        Serial.println("Sending data");
         const unsigned char foodChariArr[2]={0, (char)foodLv};
         foodChari.setValue(foodChariArr,2);
         const unsigned char playChariArr[2]={0, (char)playLv};
@@ -129,6 +130,13 @@ void updateStatus(){
       cleanLv=0;
     }
     updated=true;
+    Serial.print(foodLv);
+    Serial.print(' ');
+    Serial.print(playLv);
+    Serial.print(' ');
+    Serial.print(cleanLv);
+    Serial.print(' ');
+    Serial.println();
     lastTimer=millis();
   }
 }

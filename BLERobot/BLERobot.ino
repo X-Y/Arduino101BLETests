@@ -74,14 +74,12 @@ void loop() {
         memcpy(charBuffer,logoCharacteristic.value(),20);
         for(int i=0;i<20 && charBuffer[i]!=0;i++){
           unsigned char n=charBuffer[i];
-
-          logoMove(n);
+          
           Serial.print(n);
-          
-
-          
+          logoMove(n);
         }
         Serial.println();
+        
         //Serial.println(switchCharacteristic.value());
       }
     }
@@ -95,23 +93,25 @@ void loop() {
 
 void logoMove(unsigned char direction){
   switch(direction){
-    case 1:
+    case 49:
       wheels.goForward();
       delay(3000);
       break;
-    case 2:
+    case 50:
       wheels.goBackwards();
       delay(3000);
       break;
-    case 3:
+    case 51:
       wheels.turnLeft();
       delay(1500);
       break;
-    case 4:
+    case 52:
       wheels.turnRight();
       delay(1500);
       break;
   }
+  wheels.standStill();
+  delay(300);
 }
 
 
