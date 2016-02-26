@@ -19,11 +19,12 @@ void loop() {
   if(uart.searchCentral()){
     Serial.println("Connected to central: ");
     while(uart.connected()){
-      /*
+      
       if(uart.dataReceived()){
         uart.fetchData();
         Serial.println(uart.receivedString());
-      }*/
+        uart.sendString(uart.receivedString(),20);
+      }
       /*
       uart.sendString("I want icecream",15);
       delay(1000);
@@ -35,12 +36,12 @@ void loop() {
       uart.send();
       delay(1000);
       */
-      
+      /*
       if(uart.dataReceived()){
         uart.fetchData();
         Serial.println(uart.getValueAt(0));
       }
-      
+      */
     }
     Serial.println(F("Disconnected from central: "));
 
