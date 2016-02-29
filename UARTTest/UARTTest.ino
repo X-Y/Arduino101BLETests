@@ -5,7 +5,7 @@
 #include <EducationShield.h>
 #include <CurieBle.h>
 
-BLEuart uart;
+BLEuart uart=BLEuart(SERVICEID_MESSENGER);
 
 void setup() {
   // put your setup code here, to run once:
